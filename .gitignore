@@ -1,0 +1,15 @@
+/frameworks
+/.idea
+Temp.txt
+/simulator/
+/frameworks2/
+/publish/
+/*.DS_Store
+*.DS_Store
+UpdateResource.exe
+/keystore
+*.zip
+*.manifest
+/node_modules
+/.vs
+/dist
