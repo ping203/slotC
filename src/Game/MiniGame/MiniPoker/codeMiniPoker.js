@@ -14,14 +14,13 @@ var miniPoker = null;
         ctor: function () {
             this._super();
             this.pokerlayout = null;
-            this.chk_auto_quay = null;
             this.tran_pokerlayout = null;
-            this.btncangat = null;
             this.arrLaBaiCot1 = [];
             this.arrLaBaiCot2 = [];
             this.arrLaBaiCot3 = [];
             this.arrLaBaiCot4 = [];
             this.arrLaBaiCot5 = [];
+
             this.layoutCot1 = null;
             this.layoutCot2 = null;
             this.layoutCot3 = null;
@@ -33,22 +32,26 @@ var miniPoker = null;
             this.randomLaBaiCot4 = [];
             this.randomLaBaiCot5 = [];
             this.txtMoneyLayout = null;
+
+            this.valueMoney = 100;
+            this.typeMoney = 1;
+
+            this.btnroom1 = null;
+            this.btnroom2 = null;
+            this.btnroom3 = null;
         },
         customizeGUI: function () {
-            this.initBg();
-            this.initPanel();
-            this.autoSpin();
-            this.initFade();
+            this.initBackground();
+            this.createColumnPoker();
+            this.createShadow();
         },
-        onEnter: function () {
-            this._super();
-        },
-        initBg: function () {
-            var that = this;
+        initBackground: function () {
             this.addLayout(this, "pokerlayout", cc.p(640, 360), null, cc.size(1280, 720), true);
             this.addImage(this.pokerlayout, "bg", cc.p(589, 328), res_MinigamePoker + "/bg.png", cc.size(714, 404));
             this.addImage(this.pokerlayout, "title", cc.p(571, 558), res_MinigamePoker + "/title.png", cc.size(316, 105));
             this.addImage(this.pokerlayout, "bgcoin", cc.p(579, 464), res_MinigamePoker + "/pot.png", cc.size(278, 62));
+            this.addButton(this.pokerlayout, "btn_change_money_type", codeMiniPoker.BTN_CHANGE_MONEY_TYPE, cc.p(470, 463), false, res_MinigamePoker + "/coin.png", res_MinigamePoker + "/coin.png", ccui.Widget.LOCAL_TEXTURE);
+
             this.addImage(this.pokerlayout, "in_bg", cc.p(599, 310), res_MinigamePoker + "/in_bg.png", cc.size(427, 228));
             this.addLayout(this.pokerlayout, "tran_pokerlayout", cc.p(599, 312), res_MinigamePoker + "/in_bg.png", cc.size(427, 200), true);
             this.tran_pokerlayout.setClippingEnabled(true);
@@ -58,23 +61,25 @@ var miniPoker = null;
             this.addButton(this.pokerlayout, "btncup", codeMiniPoker.BTN_CUP, cc.p(582, 134), true, res_MinigamePoker + "/cup.png", null, ccui.Widget.LOCAL_TEXTURE);
             this.addButton(this.pokerlayout, "btnhelp", codeMiniPoker.BTN_HELP, cc.p(660, 134), true, res_MinigamePoker + "/help.png", null, ccui.Widget.LOCAL_TEXTURE);
             this.addButton(this.pokerlayout, "btnclose", codeMiniPoker.BTN_CLOSE, cc.p(880, 520), true, res_MinigamePoker + "/close.png", null, ccui.Widget.LOCAL_TEXTURE);
-            // GuiUtil.setBackGroundColor(this.tran_pokerlayout, cc.color.GREEN, 200);
+
             this.addLayout(this.tran_pokerlayout, "layoutCot1", cc.p(45, 0), null, cc.size(0, 0), true);
             this.addLayout(this.tran_pokerlayout, "layoutCot2", cc.p(129, 0), null, cc.size(0, 0), true);
             this.addLayout(this.tran_pokerlayout, "layoutCot3", cc.p(213, 0), null, cc.size(0, 0), true);
             this.addLayout(this.tran_pokerlayout, "layoutCot4", cc.p(296, 0), null, cc.size(0, 0), true);
             this.addLayout(this.tran_pokerlayout, "layoutCot5", cc.p(380, 0), null, cc.size(0, 0), true);
 
-            this.addButton(this.pokerlayout, "btn100", codeMiniPoker.BTN_MONEY100, cc.p(327, 406), true, res_MinigamePoker + "/active.png", res_MinigamePoker + "/active.png", ccui.Widget.LOCAL_TEXTURE);
-            this.addButton(this.pokerlayout, "btn1k", codeMiniPoker.BTN_MONEY1K, cc.p(327, 325), true, res_MinigamePoker + "/money.png", res_MinigamePoker + "/money.png", ccui.Widget.LOCAL_TEXTURE);
-            this.addButton(this.pokerlayout, "btn10k", codeMiniPoker.BTN_MONEY10K, cc.p(327, 241), true, res_MinigamePoker + "/money.png", res_MinigamePoker + "/money.png", ccui.Widget.LOCAL_TEXTURE);
-            this.btn100.setTitleFontName(fontUTMBebas.fontName);
-            this.btn1k.setTitleFontName(fontUTMBebas.fontName);
-            this.btn10k.setTitleFontName(fontUTMBebas.fontName);
-
+            this.addButton(this.pokerlayout, "btnroom1", codeMiniPoker.BTN_ROOM1, cc.p(327, 406), true, res_MinigamePoker + "/active.png", res_MinigamePoker + "/active.png", ccui.Widget.LOCAL_TEXTURE);
+            this.addButton(this.pokerlayout, "btnroom2", codeMiniPoker.BTN_ROOM2, cc.p(327, 325), true, res_MinigamePoker + "/money.png", res_MinigamePoker + "/money.png", ccui.Widget.LOCAL_TEXTURE);
+            this.addButton(this.pokerlayout, "btnroom3", codeMiniPoker.BTN_ROOM3, cc.p(327, 241), true, res_MinigamePoker + "/money.png", res_MinigamePoker + "/money.png", ccui.Widget.LOCAL_TEXTURE);
+            this.btnroom1.setTitleFontName(fontUTMBebas.fontName);
+            this.btnroom1.setTitleText("100");
+            this.btnroom2.setTitleFontName(fontUTMBebas.fontName);
+            this.btnroom2.setTitleText("1k");
+            this.btnroom3.setTitleFontName(fontUTMBebas.fontName);
+            this.btnroom3.setTitleText("10k");
             this.addText(this.pokerlayout, "txttuquay", cc.p(858, 358), "tự quay", fontUTMBebas.fontName, 24);
             this.txttuquay.setColor(cc.color("#ffe05b"));
-            this.addCheckBox(this.pokerlayout, "chk_auto_quay", cc.p(858, 315), false, res_MinigamePoker + "/check.png", res_MinigamePoker + "/check.png", res_MinigamePoker + "/cross.png",res_MinigamePoker + "/checked.png", res_MinigamePoker + "/checked.png", ccui.Widget.LOCAL_TEXTURE);
+            this.addCheckBox(this.pokerlayout, "chk_auto_quay", cc.p(858, 315), false, res_MinigamePoker + "/check.png", res_MinigamePoker + "/check.png", res_MinigamePoker + "/cross.png", res_MinigamePoker + "/checked.png", res_MinigamePoker + "/checked.png", ccui.Widget.LOCAL_TEXTURE);
             this.chk_auto_quay.addEventListener(this.autoSpin, this);
 
             this.addLayout(this.pokerlayout, "txtMoneyLayout", cc.p(501, 444), null, cc.size(194, 38), false);
@@ -83,7 +88,7 @@ var miniPoker = null;
             this.addText(this.txtMoneyLayout, "txtMoney", cc.p(100, 18), "0", fontUTMBebas.fontName, 40);
             this.txtMoney.setColor(cc.color("#ffcf52"));
         },
-        initPanel: function () {
+        createColumnPoker: function () {
             var sizeP = cc.size(78, 105);
             this.dsLaBai = GeneratePoker.generate5col();
             this.randomLaBaiCot1 = this.dsLaBai.slice(0, 30);
@@ -100,7 +105,7 @@ var miniPoker = null;
                 this.arrLaBaiCot5.push(new Poker(this.layoutCot5, this.randomLaBaiCot5[i].num, this.randomLaBaiCot5[i].type, sizeP, cc.p(0, i * 105)));
             }
         },
-        initFade: function () {
+        createShadow: function () {
             this.addImage(this.tran_pokerlayout, null, cc.p(213, 173), res_MinigamePoker + "/fade1.png", cc.size(421, 56));
             this.addImage(this.tran_pokerlayout, null, cc.p(213, 24), res_MinigamePoker + "/fade2.png", cc.size(421, 56));
             this.addImage(this.tran_pokerlayout, null, cc.p(213, 106), res_MinigamePoker + "/highlight.png", cc.size(418, 109));
@@ -112,26 +117,48 @@ var miniPoker = null;
             switch (type) {
                 case ccui.CheckBox.EVENT_UNSELECTED:
                     console.log("Not seclected");
-
-                    if (this.interval)
-                        clearInterval(this.interval);
+                    // self.autoPlayCmd.putAutoMiniPoker(0);
                     break;
                 case ccui.CheckBox.EVENT_SELECTED:
                     console.log("Seclected");
-                    this.interval = setInterval(function () {
-                        that.spin();
-                    }, 6000);
+                    // self.autoPlayCmd.putAutoMiniPoker(1);
                     break;
             }
         },
         //type: heart, diamond, club, spade = co, ro, tep, bich
         onButtonRelease: function (button, id) {
             switch (id) {
-                case MiniPoker.BTN_CANGAT:
-                    this.spin();
+                case codeMiniPoker.BTN_CANGAT:
+                    let playMiniPoker = new CmdSendMiniPoker();
+                    playMiniPoker.putPlayMiniPoker(this.valueMoney, this.typeMoney);
+                    if (Minigame.miniGameClient.send(playMiniPoker)) {
+
+                    }
+                    playMiniPoker.clean();
                     break;
-                case MiniPoker.BTN_CLOSE:
+                case codeMiniPoker.BTN_CLOSE:
                     this.removeFromParent();
+                    break;
+                case codeMiniPoker.BTN_ROOM1:
+                    this.selectRoom(this.btnroom1);
+                    break;
+                case codeMiniPoker.BTN_ROOM2:
+                    this.selectRoom(this.btnroom2);
+                    break;
+                case codeMiniPoker.BTN_ROOM3:
+                    this.selectRoom(this.btnroom3);
+                    break;
+                case codeMiniPoker.BTN_CHANGE_MONEY_TYPE:
+                    if (this.moneyType === 0) {
+                        this.btnroom1.setTitleText("1k");
+                        this.btnroom2.setTitleText("10k");
+                        this.btnroom3.setTitleText("100k");
+                    } else if (this.moneyType === 1) {
+                        this.btnroom1.setTitleText("100");
+                        this.btnroom2.setTitleText("1k");
+                        this.btnroom3.setTitleText("10k");
+                    }
+                    this.selectRoom(this.btnroom1);
                     break;
             }
         },
@@ -149,35 +176,35 @@ var miniPoker = null;
             for (let i = 0; i < 5; i++) {
                 setTimeout(function () {
                     if (i === 0) {
-                        that.playColumn(that.layoutCot1);
+                        that.spinAColumn(that.layoutCot1);
                         that.layoutCot1.setPosition(45, 0);
                         for (let j = 0; j < 3; j++) {
                             that.arrLaBaiCot1[j + 27].updatePoker(labaicot1[j].num, labaicot1[j].type);
                         }
                     }
                     if (i === 1) {
-                        that.playColumn(that.layoutCot2);
+                        that.spinAColumn(that.layoutCot2);
                         that.layoutCot2.setPosition(129, 0);
                         for (let j = 0; j < 3; j++) {
                             that.arrLaBaiCot2[j + 27].updatePoker(labaicot2[j].num, labaicot2[j].type);
                         }
                     }
                     if (i === 2) {
-                        that.playColumn(that.layoutCot3);
+                        that.spinAColumn(that.layoutCot3);
                         that.layoutCot3.setPosition(213, 0);
                         for (let j = 0; j < 3; j++) {
                             that.arrLaBaiCot3[j + 27].updatePoker(labaicot3[j].num, labaicot3[j].type);
                         }
                     }
                     if (i === 3) {
-                        that.playColumn(that.layoutCot4);
+                        that.spinAColumn(that.layoutCot4);
                         that.layoutCot4.setPosition(296, 0);
                         for (let j = 0; j < 3; j++) {
                             that.arrLaBaiCot4[j + 27].updatePoker(labaicot4[j].num, labaicot4[j].type);
                         }
                     }
                     if (i === 4) {
-                        that.playColumn(that.layoutCot5);
+                        that.spinAColumn(that.layoutCot5);
                         that.layoutCot5.setPosition(380, 0);
                         for (let j = 0; j < 3; j++) {
                             that.arrLaBaiCot5[j + 27].updatePoker(labaicot5[j].num, labaicot5[j].type);
@@ -186,9 +213,8 @@ var miniPoker = null;
                 }, timeSpin);
                 timeSpin += 200;
             }
-            console.log("Complete");
         },
-        playColumn: function (parent) {
+        spinAColumn: function (parent) {
             let that = this;
             let moveDown = new cc.MoveBy(4, cc.p(0, -105 * (that.randomLaBaiCot1.length - 3))).easing(cc.easeInOut(3.0));
             parent.runAction(moveDown);
@@ -202,6 +228,14 @@ var miniPoker = null;
                 }
             }, 2000)
         },
+        selectRoom(room) {
+            let textture = ccui.Widget.LOCAL_TEXTURE;
+            this.btnroom1.loadTextureNormal(res_MinigamePoker + "/money.png", textture);
+            this.btnroom2.loadTextureNormal(res_MinigamePoker + "/money.png", textture);
+            this.btnroom3.loadTextureNormal(res_MinigamePoker + "/money.png", textture);
+            room.loadTextureNormal(res_MinigamePoker + "/active.png", textture);
+        },
+        //============================================================================================================================
         // ctor: function () {
         //     this._super("codeMiniPoker");
         //
@@ -236,54 +270,54 @@ var miniPoker = null;
         //     this.autoPlayCmd = null;
         //     return true;
         // },
-        initBackground: function () {
-            var self = this;
-            var texture = ccui.Widget.LOCAL_TEXTURE;
-            if (false) {
-                texture = ccui.Widget.PLIST_TEXTURE;
-            }
-            this.addButton(this.pMiniPoker, 'btnClose', codeMiniPoker.BTN_CLOSEGAMEMINIPOKER, cc.p(945, 555), false, "res/MenuTab/btn-close-round.png", "res/MenuTab/btn-close-round.png", texture);
-            this.addImage(this.pMiniPoker, 'title', cc.p(640, 594), "res/MiniGame/MiniPoker/title.png", cc.size(316, 105));
-            this.addImage(this.pMiniPoker, 'bg', cc.p(640, 360), "res/MiniGame/MiniPoker/bg.png", cc.size(714, 404));
-            this.addButton(this.pMiniPoker, 'btnSpin', codeMiniPoker.BTN_CANGAT, cc.p(1000, 400), false, "res/MiniGame/MiniPoker/cangiat.png", "res/MiniGame/MiniPoker/cangiat.png", texture);
-            this.addImage(this.pMiniPoker, 'pot', cc.p(640, 500), "res/MiniGame/MiniPoker/pot.png", cc.size(278, 62));
-            this.addText(this.pMiniPoker, 'lbPot', cc.p(568, 504), "", fontUTMBebas.fontName, 36);
-            this.addText(this.pMiniPoker, 'lb-auto-quay', cc.p(906, 385), "TỰ QUAY", fontUTMBebas.fontName, 24);
-            this['lb-auto-quay'].setColor(GuiUtil.color('#f7e788'));
-            this.addCheckBox(this.pMiniPoker, "btnAutoPlay", cc.p(906, 340), false, 'res/MiniGame/MiniPoker/checkbox.png', 'res/MiniGame/MiniPoker/checkbox.png',
-                res_Lobby + "/reg/checked.png", 'res/MiniGame/MiniPoker/checkbox.png', res_Lobby + "/reg/checked.png", ccui.Widget.LOCAL_TEXTURE);
-            this.btnAutoPlay.addEventListener(function (sender, eventType) {
-                self.autoPlayCmd = new CmdSendAutoMiniPoker();
-                if(eventType === ccui.CheckBox.EVENT_SELECTED) {
-                    self.autoPlayCmd.putAutoMiniPoker(1);
-                } else if (eventType === ccui.CheckBox.EVENT_UNSELECTED) {
-                    self.autoPlayCmd.putAutoMiniPoker(0);
-                }
-                Minigame.miniGameClient.send(self.autoPlayCmd);
-            });
-            // this.btnAutoPlay.setTag(codeMiniPoker.BTN_TUQUAY);
-            // this.btnAutoPlay.setTouchEnabled(true);
-            // this.btnAutoPlay.addTouchEventListener(this.onTouchEventHandler, this);
-            this.lbPot._setAnchorX(0);
-            this.addButton(this.pMiniPoker, 'changeMoneyType', codeMiniPoker.BTN_CHANGEMONEYTYPE, cc.p(534, 500), false, "res/MenuTab/coin-money.png", "res/MenuTab/coin-money.png", texture);
-            this.addImage(this.pMiniPoker, 'in-bg', cc.p(640, 348), "res/MiniGame/MiniPoker/in_bg.png", cc.size(427, 228));
-            this.addButton(this.pMiniPoker, 'history', codeMiniPoker.BTN_LICHSU, cc.p(564, 164), false, "res/MiniGame/MiniPoker/lichsu.png", "res/MiniGame/MiniPoker/lichsu.png", texture);
-            this.addButton(this.pMiniPoker, 'top', codeMiniPoker.BTN_TOPXEPHANG, cc.p(640, 164), false, "res/MiniGame/MiniPoker/ds-dungdau.png", "res/MiniGame/MiniPoker/ds-dungdau.png", texture);
-            this.addButton(this.pMiniPoker, 'guide', codeMiniPoker.BTN_HUONG_DAN, cc.p(716, 164), false, "res/MiniGame/MiniPoker/huongdan.png", "res/MiniGame/MiniPoker/huongdan.png", texture);
-            this.addButton(this.pMiniPoker, 'btnRoom1', codeMiniPoker.BTN_SELECTROOM1, cc.p(378, 448), false, "res/MiniGame/MiniPoker/bg-btn-active.png", "res/MiniGame/MiniPoker/bg-btn-active.png", texture);
-            this.addButton(this.pMiniPoker, 'btnRoom2', codeMiniPoker.BTN_SELECTROOM2, cc.p(378, 362), false, "res/MiniGame/MiniPoker/bg-btn.png", "res/MiniGame/MiniPoker/bg-btn.png", texture);
-            this.addButton(this.pMiniPoker, 'btnRoom3', codeMiniPoker.BTN_SELECTROOM3, cc.p(378, 278), false, "res/MiniGame/MiniPoker/bg-btn.png", "res/MiniGame/MiniPoker/bg-btn.png", texture);
-            this.addLayout(this.pMiniPoker, 'spinContent', cc.p(640, 348), null, cc.size(427, 205), false);
-            this.addSprite(this.pMiniPoker, 'shadown-inbg', cc.p(640, 348), "res/MiniGame/MiniPoker/shadow-inbg.png", texture);
-            this['spinContent'].setClippingEnabled(true);
-
-            this.btnRoom1.setTitleText('100');
-            this.btnRoom2.setTitleText('1k');
-            this.btnRoom3.setTitleText('10k');
-            this.btnRoom1.setTitleFontName(fontUTMBebas.fontName);
-            this.btnRoom2.setTitleFontName(fontUTMBebas.fontName);
-            this.btnRoom3.setTitleFontName(fontUTMBebas.fontName);
-        },
+        // initBackground: function () {
+        //     var self = this;
+        //     var texture = ccui.Widget.LOCAL_TEXTURE;
+        //     if (false) {
+        //         texture = ccui.Widget.PLIST_TEXTURE;
+        //     }
+        //     this.addButton(this.pMiniPoker, 'btnClose', codeMiniPoker.BTN_CLOSEGAMEMINIPOKER, cc.p(945, 555), false, "res/MenuTab/btn-close-round.png", "res/MenuTab/btn-close-round.png", texture);
+        //     this.addImage(this.pMiniPoker, 'title', cc.p(640, 594), "res/MiniGame/MiniPoker/title.png", cc.size(316, 105));
+        //     this.addImage(this.pMiniPoker, 'bg', cc.p(640, 360), "res/MiniGame/MiniPoker/bg.png", cc.size(714, 404));
+        //     this.addButton(this.pMiniPoker, 'btnSpin', codeMiniPoker.BTN_CANGAT, cc.p(1000, 400), false, "res/MiniGame/MiniPoker/cangiat.png", "res/MiniGame/MiniPoker/cangiat.png", texture);
+        //     this.addImage(this.pMiniPoker, 'pot', cc.p(640, 500), "res/MiniGame/MiniPoker/pot.png", cc.size(278, 62));
+        //     this.addText(this.pMiniPoker, 'lbPot', cc.p(568, 504), "", fontUTMBebas.fontName, 36);
+        //     this.addText(this.pMiniPoker, 'lb-auto-quay', cc.p(906, 385), "TỰ QUAY", fontUTMBebas.fontName, 24);
+        //     this['lb-auto-quay'].setColor(GuiUtil.color('#f7e788'));
+        //     this.addCheckBox(this.pMiniPoker, "btnAutoPlay", cc.p(906, 340), false, 'res/MiniGame/MiniPoker/checkbox.png', 'res/MiniGame/MiniPoker/checkbox.png',
+        //         res_Lobby + "/reg/checked.png", 'res/MiniGame/MiniPoker/checkbox.png', res_Lobby + "/reg/checked.png", ccui.Widget.LOCAL_TEXTURE);
+        //     this.btnAutoPlay.addEventListener(function (sender, eventType) {
+        //         self.autoPlayCmd = new CmdSendAutoMiniPoker();
+        //         if (eventType === ccui.CheckBox.EVENT_SELECTED) {
+        //             self.autoPlayCmd.putAutoMiniPoker(1);
+        //         } else if (eventType === ccui.CheckBox.EVENT_UNSELECTED) {
+        //             self.autoPlayCmd.putAutoMiniPoker(0);
+        //         }
+        //         Minigame.miniGameClient.send(self.autoPlayCmd);
+        //     });
+        //     this.btnAutoPlay.setTag(codeMiniPoker.BTN_TUQUAY);
+        //     this.btnAutoPlay.setTouchEnabled(true);
+        //     this.btnAutoPlay.addTouchEventListener(this.onTouchEventHandler, this);
+        //     this.lbPot._setAnchorX(0);
+        //     this.addButton(this.pMiniPoker, 'changeMoneyType', codeMiniPoker.BTN_CHANGEMONEYTYPE, cc.p(534, 500), false, "res/MenuTab/coin-money.png", "res/MenuTab/coin-money.png", texture);
+        //     this.addImage(this.pMiniPoker, 'in-bg', cc.p(640, 348), "res/MiniGame/MiniPoker/in_bg.png", cc.size(427, 228));
+        //     this.addButton(this.pMiniPoker, 'history', codeMiniPoker.BTN_LICHSU, cc.p(564, 164), false, "res/MiniGame/MiniPoker/lichsu.png", "res/MiniGame/MiniPoker/lichsu.png", texture);
+        //     this.addButton(this.pMiniPoker, 'top', codeMiniPoker.BTN_TOPXEPHANG, cc.p(640, 164), false, "res/MiniGame/MiniPoker/ds-dungdau.png", "res/MiniGame/MiniPoker/ds-dungdau.png", texture);
+        //     this.addButton(this.pMiniPoker, 'guide', codeMiniPoker.BTN_HUONG_DAN, cc.p(716, 164), false, "res/MiniGame/MiniPoker/huongdan.png", "res/MiniGame/MiniPoker/huongdan.png", texture);
+        //     this.addButton(this.pMiniPoker, 'btnRoom1', codeMiniPoker.BTN_SELECTROOM1, cc.p(378, 448), false, "res/MiniGame/MiniPoker/bg-btn-active.png", "res/MiniGame/MiniPoker/bg-btn-active.png", texture);
+        //     this.addButton(this.pMiniPoker, 'btnRoom2', codeMiniPoker.BTN_SELECTROOM2, cc.p(378, 362), false, "res/MiniGame/MiniPoker/bg-btn.png", "res/MiniGame/MiniPoker/bg-btn.png", texture);
+        //     this.addButton(this.pMiniPoker, 'btnRoom3', codeMiniPoker.BTN_SELECTROOM3, cc.p(378, 278), false, "res/MiniGame/MiniPoker/bg-btn.png", "res/MiniGame/MiniPoker/bg-btn.png", texture);
+        //     this.addLayout(this.pMiniPoker, 'spinContent', cc.p(640, 348), null, cc.size(427, 205), false);
+        //     this.addSprite(this.pMiniPoker, 'shadown-inbg', cc.p(640, 348), "res/MiniGame/MiniPoker/shadow-inbg.png", texture);
+        //     this['spinContent'].setClippingEnabled(true);
+        //
+        //     this.btnRoom1.setTitleText('100');
+        //     this.btnRoom2.setTitleText('1k');
+        //     this.btnRoom3.setTitleText('10k');
+        //     this.btnRoom1.setTitleFontName(fontUTMBebas.fontName);
+        //     this.btnRoom2.setTitleFontName(fontUTMBebas.fontName);
+        //     this.btnRoom3.setTitleFontName(fontUTMBebas.fontName);
+        // },
         // customizeGUI: function () {
         //     this.pMiniPoker = new ccui.Layout();
         //     this.addLayout(this, 'pMiniPoker', cc.p(640, 320), null, cc.size(1280, 720), true);
@@ -384,9 +418,9 @@ var miniPoker = null;
         //     this.btnRoom3.loadTextureNormal("res/MiniGame/MiniPoker/bg-btn.png", texture);
         //     node.loadTextureNormal("res/MiniGame/MiniPoker/bg-btn-active.png", texture);
         // },
-        // responseX2Date: function (datex2) {
-        //
-        // },
+        responseX2Date: function (datex2) {
+
+        },
         // commandPlayMinigame: function () {
         //     var playMiniPoker = new CmdSendMiniPoker();
         //     playMiniPoker.putPlayMiniPoker(this.valueMoney, this.moneyType);
@@ -413,31 +447,110 @@ var miniPoker = null;
         //     this.btnCoin1000.setEnabled(false);
         //     this.btnCoin10000.setEnabled(false);*/
         // },
-        // responseUpdateMiniPoker: function (value, x2) {
-        //     this.lbPot.setText(StringUtility.pointNumber(x2 === 1 ? value * 2 : value));
-        // },
-        // responsePlayMiniPoker: function (result, prize, card1, card2, card3, card4, card5, currentmoney) {
-        //     var self = this;
-        //     // cc.log(new Date().getSeconds());
-        //     if (this.effectLayer) this.effectLayer.removeFromParent();
-        //     this['btnSpin'].setTouchEnabled(false);
-        //     cc.log("result: " + result + ", prize: " + prize + ", card: " + card1 + "," + card2 + "," + card3 + "," + card4 + "," + card5 + " currentmoney " + currentmoney);
-        //     this['spinContent'].removeAllChildren();
-        //     var resCard = [this.parserCard(card1), this.parserCard(card2), this.parserCard(card3), this.parserCard(card4), this.parserCard(card5)];
-        //     var ranCard = this.createCardNotLike(10, resCard);
-        //     for (var i = 0; i < 5; i++) {
-        //         var threeLast = [ranCard[i * 2], resCard[i], ranCard[i + 1]];
-        //         this.columns[i].col = new ColumnCardMiniPoker(this.columns[i].col.arrCard.slice(27, 30), threeLast);
-        //         this.columns[i].col.x = this.columns[i].x;
-        //         this.runEffectColumn(this.columns[i].col, i === 0 ? 0 : i * 300);
-        //         this['spinContent'].addChild(this.columns[i].col);
-        //     }
-        //     // xong hieu ung quay
-        //     setTimeout(function () {
-        //         self.showResult(result, prize);
-        //         self['btnSpin'].setTouchEnabled(true);
-        //     }, 3000);
-        // },
+        responseUpdateMiniPoker: function (value, x2) {
+            // this.lbPot.setText(StringUtility.pointNumber(x2 === 1 ? value * 2 : value));
+        },
+        responsePlayMiniPoker: function (result, prize, card1, card2, card3, card4, card5, currentmoney) {
+            // var self = this;
+            // cc.log(new Date().getSeconds());
+            // if (this.effectLayer) this.effectLayer.removeFromParent();
+            // this['btnSpin'].setTouchEnabled(false);
+            cc.log("result: " + result + ", prize: " + prize + ", card: " + card1 + "," + card2 + "," + card3 + "," + card4 + "," + card5 + " currentmoney " + currentmoney);
+            // this['spinContent'].removeAllChildren();
+            // var resCard = [this.parserCard(card1), this.parserCard(card2), this.parserCard(card3), this.parserCard(card4), this.parserCard(card5)];
+            // var ranCard = this.createCardNotLike(10, resCard);
+            // for (var i = 0; i < 5; i++) {
+            //     var threeLast = [ranCard[i * 2], resCard[i], ranCard[i + 1]];
+            //     this.columns[i].col = new ColumnCardMiniPoker(this.columns[i].col.arrCard.slice(27, 30), threeLast);
+            //     this.columns[i].col.x = this.columns[i].x;
+            //     this.runEffectColumn(this.columns[i].col, i === 0 ? 0 : i * 300);
+            //     this['spinContent'].addChild(this.columns[i].col);
+            // }
+            // xong hieu ung quay
+            // setTimeout(function () {
+            //     self.showResult(result, prize);
+            //     self['btnSpin'].setTouchEnabled(true);
+            // }, 3000);
+            let that = this;
+            let timeSpin = 0;
+            let serverPoker = [this.parseCard(card1), this.parseCard(card2), this.parseCard(card3), this.parseCard(card4), this.parseCard(card5)];
+            console.log(serverPoker);
+            let labai = GeneratePoker.randomPokerDiffArr(10, serverPoker);
+            // console.log(labai);
+            let labaicot1 = labai.slice(0, 3);
+            let labaicot2 = labai.slice(3, 6);
+            let labaicot3 = labai.slice(6, 9);
+            let labaicot4 = labai.slice(9, 12);
+            let labaicot5 = labai.slice(12, 15);
+            for (let i = 0; i < 5; i++) {
+                setTimeout(function () {
+                    if (i === 0) {
+                        that.spinAColumn(that.layoutCot1);
+                        that.layoutCot1.setPosition(45, 0);
+                        for (let j = 0; j < 3; j++) {
+                            that.arrLaBaiCot1[j + 27].updatePoker(labaicot1[j].num, labaicot1[j].type);
+                        }
+                    }
+                    if (i === 1) {
+                        that.spinAColumn(that.layoutCot2);
+                        that.layoutCot2.setPosition(129, 0);
+                        for (let j = 0; j < 3; j++) {
+                            that.arrLaBaiCot2[j + 27].updatePoker(labaicot2[j].num, labaicot2[j].type);
+                        }
+                    }
+                    if (i === 2) {
+                        that.spinAColumn(that.layoutCot3);
+                        that.layoutCot3.setPosition(213, 0);
+                        for (let j = 0; j < 3; j++) {
+                            that.arrLaBaiCot3[j + 27].updatePoker(labaicot3[j].num, labaicot3[j].type);
+                        }
+                    }
+                    if (i === 3) {
+                        that.spinAColumn(that.layoutCot4);
+                        that.layoutCot4.setPosition(296, 0);
+                        for (let j = 0; j < 3; j++) {
+                            that.arrLaBaiCot4[j + 27].updatePoker(labaicot4[j].num, labaicot4[j].type);
+                        }
+                    }
+                    if (i === 4) {
+                        that.spinAColumn(that.layoutCot5);
+                        that.layoutCot5.setPosition(380, 0);
+                        for (let j = 0; j < 3; j++) {
+                            that.arrLaBaiCot5[j + 27].updatePoker(labaicot5[j].num, labaicot5[j].type);
+                        }
+                    }
+                }, timeSpin);
+                timeSpin += 200;
+            }
+            this.txtMoney.setString(currentmoney);
+        },
+        parseCard: function (x) {
+            let num = parseInt(x / 4) + 2;
+            let typeNum = x - (num - 2) * 4;
+            let type = "";
+            switch (typeNum) {
+                case 0:
+                    type = "bich";
+                    break;
+                case 1:
+                    type = "tep";
+                    break;
+                case 2:
+                    type = "ro";
+                    break;
+                case 3:
+                    type = "co";
+                    break;
+            }
+            if (num === 11) num = "J";
+            if (num === 12) num = "Q";
+            if (num === 13) num = "K";
+            if (num === 14) num = "A";
+            return {
+                num: num + "",
+                type: type
+            }
+        },
         // responseStopAutoMiniPoker: function () {
         //     cc.log("responseStopAutoMiniPoker");
         //     // this.autoPlayCmd.putAutoMiniPoker(false);
@@ -667,14 +780,15 @@ var miniPoker = null;
     // codeMiniPoker.BTN_TOPXEPHANG = 12;
     // codeMiniPoker.BTN_LICHSUGIAODICH = 13;
     // codeMiniPoker.BTN_EVENT = 14;
-    codeMiniPoker.BTN_MONEY100 = 0;
-    codeMiniPoker.BTN_MONEY1K = 1;
-    codeMiniPoker.BTN_MONEY10K = 2;
+    codeMiniPoker.BTN_ROOM1 = 0;
+    codeMiniPoker.BTN_ROOM2 = 1;
+    codeMiniPoker.BTN_ROOM3 = 2;
     codeMiniPoker.BTN_CHECK_AUTO = 3;
     codeMiniPoker.BTN_LICHSU = 4;
     codeMiniPoker.BTN_CUP = 5;
     codeMiniPoker.BTN_HELP = 6;
     codeMiniPoker.BTN_CANGAT = 7;
     codeMiniPoker.BTN_CLOSE = 8;
+    codeMiniPoker.BTN_CHANGE_MONEY_TYPE = 9;
 })();
 
